@@ -26,9 +26,10 @@ class ViewController: UIViewController {
         setConstraints()
     }
 
-    @objc func pressed () {
-        self.label.text = self.textField.text
-        fetchWordsFromAPI()
+    @objc func pressed () async {
+        let word = self.textField.text
+        self.label.text = word
+        words = await fetchWordsFromAPI(word: word!)
     }
     
     func setupLabel(){
