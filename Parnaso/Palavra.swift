@@ -7,6 +7,10 @@
 
 import Foundation
 
+struct Palavras : Codable{
+    let results : [Palavra]
+}
+
 struct Palavra : Codable {
     let categoria : String
     let palavra : String

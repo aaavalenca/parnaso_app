@@ -8,8 +8,13 @@
 import Foundation
 
 func fetchWordsFromAPI(word:  String) async -> [Palavra]{
-        let url = URL(string: "https://dicio-rimas-app-b3865f437d45.herokuapp.com/rhyme/\(word)")!
+    
+    if let encodedString = word.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
         
+    let url = URL(string: "https://dicio-rimas-app-b3865f437d45.herokuapp.com/rhyme/\(encodedString)")!
+//        print(url)
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 30
         let session = URLSession.shared
         
         do {
@@ -22,4 +27,8 @@ func fetchWordsFromAPI(word:  String) async -> [Palavra]{
             print(error)
         }
         return []
+    }
+    else {
+        return []
+    }
 }

@@ -19,6 +19,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         self.view.backgroundColor = UIColor(red: 0, green: 128/255, blue: 128/255, alpha: 1)
+        self.navigationItem.title = "Parnaso"
         
         setupTableView()
         setupTextField()
@@ -96,12 +97,10 @@ class ViewController: UIViewController {
             button.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
             button.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -100)
             
-            
         ])
     }
     
     @objc func pressed(sender: UIButton) {
-        
         guard let name = self.textField.text else {
             self.label.text = ""
             return
@@ -112,8 +111,6 @@ class ViewController: UIViewController {
             self.tableView.reloadData()
         }
     }
-    
-    
 }
 
 extension ViewController: UITableViewDataSource {
@@ -129,7 +126,11 @@ extension ViewController: UITableViewDataSource {
 }
 
 extension ViewController : UITextFieldDelegate {
-    
-    
-    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let newText = (textField.text! as NSString).replacingCharacters(in: range, with: string)
+        if string == " " {
+            return false
+        }
+        return newText.count <= 12
+    }
 }
