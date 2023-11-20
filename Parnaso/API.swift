@@ -11,6 +11,7 @@ func fetchWordsFromAPI(word:  String) async -> [Palavra]{
     
     if let encodedString = word.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
         
+//    let url = URL(string: "https://aaavalenca.pythonanywhere.com/rhyme/\(encodedString)")!
     let url = URL(string: "https://dicio-rimas-app-b3865f437d45.herokuapp.com/rhyme/\(encodedString)")!
 //        print(url)
         var request = URLRequest(url: url)

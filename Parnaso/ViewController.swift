@@ -30,17 +30,20 @@ class ViewController: UIViewController {
     
     func setupLabel(){
         label.text = "PALAVRA"
-        label.textColor = .red
+        label.textColor = .black
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.layer.cornerRadius = 10
         
         view.addSubview(label)
     }
     
     func setupButton(){
-        button.setTitle("Display Text", for: .normal)
-        button.backgroundColor = .blue
+        button.setTitle("RIMAR", for: .normal)
+        button.contentEdgeInsets = UIEdgeInsets(top: 8.0, left: 8.0, bottom: 8.0,right: 8.0)
+        button.backgroundColor = .gray
         button.addTarget(self, action: #selector(self.pressed), for: .touchUpInside)
+        button.layer.cornerRadius = 10
         button.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(button)
@@ -77,25 +80,30 @@ class ViewController: UIViewController {
             textField.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 100),
             textField.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20),
             textField.bottomAnchor.constraint(equalTo: self.textField.topAnchor, constant: 40),
-            textField.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20),
+            textField.rightAnchor.constraint(equalTo: button.leftAnchor, constant: -10),
+            
+            //            button
+            
+            button.topAnchor.constraint(equalTo: textField.topAnchor),
+            button.leftAnchor.constraint(equalTo: textField.rightAnchor),
+            button.bottomAnchor.constraint(equalTo: textField.bottomAnchor),
+            button.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20),
+            
+            //            label
+            
+            label.topAnchor.constraint(equalTo: self.textField.bottomAnchor, constant: 20),
+            label.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20),
+            label.bottomAnchor.constraint(equalTo: self.label.bottomAnchor, constant: -20),
+            label.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20),
             
             //            tableview
             
-            tableView.topAnchor.constraint(equalTo: self.textField.bottomAnchor, constant: 20),
+            tableView.topAnchor.constraint(equalTo: self.label.bottomAnchor, constant: 20),
             tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20),
             tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -20),
             tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20),
             
             
-            //            label
-            
-            label.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: self.view.centerYAnchor),
-            
-            //            button
-            
-            button.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
-            button.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: -100)
             
         ])
     }
