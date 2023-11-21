@@ -13,35 +13,42 @@ class ViewController: UIViewController {
     let textField = UITextField()
     let label = UILabel()
     let button = UIButton()
-    var words : [Palavra] = []
+    var categories : [String] = []
+    var rhymes : [Palavra] = []
+    let stackView = UIStackView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.view.backgroundColor = UIColor(red: 0, green: 128/255, blue: 128/255, alpha: 1)
+        self.view.backgroundColor = UIColor(red: 1, green: 165/255, blue: 0, alpha: 1)
         self.navigationItem.title = "Parnaso"
+        
+        self.stackView.axis = .vertical
         
         setupTableView()
         setupTextField()
         setupLabel()
         setupButton()
         setConstraints()
+        
     }
     
     func setupLabel(){
-        label.text = "PALAVRA"
+        label.text = ""
+        //        label.text.
         label.textColor = .black
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         label.layer.cornerRadius = 10
-        
+        label.textAlignment = .left
         view.addSubview(label)
     }
     
     func setupButton(){
         button.setTitle("RIMAR", for: .normal)
+        button.setTitleColor(UIColor(red: 1, green: 165/255, blue: 0, alpha: 1), for: .normal)
         button.contentEdgeInsets = UIEdgeInsets(top: 8.0, left: 8.0, bottom: 8.0,right: 8.0)
-        button.backgroundColor = .gray
+        button.backgroundColor = UIColor(red: 25/255, green: 13/255, blue: 134/255, alpha: 1)
         button.addTarget(self, action: #selector(self.pressed), for: .touchUpInside)
         button.layer.cornerRadius = 10
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -51,8 +58,12 @@ class ViewController: UIViewController {
     
     func setupTableView() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(CategoryViewCell.self, forCellReuseIdentifier: CategoryViewCell.identifier)
+        tableView.backgroundView = UIView()
+        tableView.backgroundView!.backgroundColor = UIColor(red: 1, green: 165/255, blue: 0, alpha: 1)
+        tableView.allowsSelection = true
         
         view.addSubview(tableView)
         
@@ -77,10 +88,11 @@ class ViewController: UIViewController {
             
             //            textField
             
-            textField.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 100),
+            textField.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 120),
             textField.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20),
             textField.bottomAnchor.constraint(equalTo: self.textField.topAnchor, constant: 40),
             textField.rightAnchor.constraint(equalTo: button.leftAnchor, constant: -10),
+            
             
             //            button
             
@@ -99,12 +111,10 @@ class ViewController: UIViewController {
             //            tableview
             
             tableView.topAnchor.constraint(equalTo: self.label.bottomAnchor, constant: 20),
-            tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20),
+            tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
             tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -20),
-            tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20),
-            
-            
-            
+            tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
+
         ])
     }
     
@@ -115,21 +125,38 @@ class ViewController: UIViewController {
         }
         self.label.text = name
         Task{
-            self.words = await fetchWordsFromAPI(word: name)
+            
+            self.rhymes = await fetchWordsFromAPI(word: name)
+            self.categories = Array(Set(rhymes.map { $0.categoria }))
             self.tableView.reloadData()
         }
     }
 }
 
-extension ViewController: UITableViewDataSource {
+extension ViewController: UITableViewDataSource, UITableViewDelegate{
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return words.count
+        return categories.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        cell.textLabel?.text = words[indexPath.row].palavra
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryViewCell.identifier, for: indexPath) as? CategoryViewCell  else {
+            fatalError("couldn't dequeue")
+        }
+        cell.configure(with: categories[indexPath.row])
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(cellTapped))
+        cell.addGestureRecognizer(tapGesture)
+        
         return cell
+    }
+    
+    @objc func cellTapped(sender: UITapGestureRecognizer) {
+        if let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)) {
+            let rhymesVC = RhymesViewController()
+            rhymesVC.words = self.rhymes.filter{ $0.categoria == categories[indexPath.row] }.map{ $0.palavra }
+            navigationController?.pushViewController(rhymesVC, animated: true)
+        }
     }
 }
 
