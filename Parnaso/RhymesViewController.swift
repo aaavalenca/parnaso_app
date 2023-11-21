@@ -11,9 +11,10 @@ class RhymesViewController: UIViewController {
     
     var words : [String]?
     let tableView = UITableView()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.navigationBar.tintColor = .red
         setupTableView()
     }
     
@@ -34,16 +35,22 @@ class RhymesViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor),
             tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
         ])
-        
     }
-    
 }
 
 
-extension RhymesViewController: UITableViewDataSource, UITableViewDelegate{
+extension RhymesViewController: UITableViewDataSource, UITableViewDelegate, UIPopoverPresentationControllerDelegate{
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return words?.count ?? 0
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let cell = tableView.cellForRow(at: indexPath) {
+            if let textToCopy = cell.textLabel?.text {
+                UIPasteboard.general.string = textToCopy
+            }
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -52,6 +59,11 @@ extension RhymesViewController: UITableViewDataSource, UITableViewDelegate{
         cell.backgroundColor = .clear
         cell.textLabel?.textColor = UIColor(red: 25/255, green: 13/255, blue: 134/255, alpha: 1)
         cell.textLabel?.font = .systemFont(ofSize: 14, weight: .medium)
+        
+        let bgColorView = UIView()
+        bgColorView.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: 0.3)
+        cell.selectedBackgroundView = bgColorView
+        
         return cell
     }
     

@@ -33,6 +33,11 @@ class CategoryViewCell: UITableViewCell {
         self.isUserInteractionEnabled = true
         self.accessoryType = .disclosureIndicator
         self.tintColor = .red
+        self.selectionStyle = .blue
+        
+        let bgColorView = UIView()
+        bgColorView.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: 0.3)
+        self.selectedBackgroundView = bgColorView
     }
     
     func setupUI(){

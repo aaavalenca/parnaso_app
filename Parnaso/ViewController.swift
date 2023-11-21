@@ -15,32 +15,35 @@ class ViewController: UIViewController {
     let button = UIButton()
     var categories : [String] = []
     var rhymes : [Palavra] = []
-    let stackView = UIStackView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.view.backgroundColor = UIColor(red: 1, green: 165/255, blue: 0, alpha: 1)
-//        self.navigationItem.title = "Parnaso"
         
-        self.stackView.axis = .vertical
+        let logoView = UIImageView(image: UIImage(named: "Logo"))
+        logoView.contentMode = .scaleAspectFit
+        logoView.frame = CGRect(x: 0, y: 0, width: 100, height: 50)
+        self.navigationItem.titleView = logoView
+        
+        let backItem = UIBarButtonItem()
+        backItem.title = "Voltar"
+        self.navigationItem.backBarButtonItem = backItem
         
         setupTableView()
         setupTextField()
         setupLabel()
         setupButton()
         setConstraints()
-        
     }
     
     func setupLabel(){
         label.text = ""
         label.textColor = .red
-        label.font = .systemFont(ofSize: 48, weight: .black)
+        label.font = .systemFont(ofSize: 42, weight: .black)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.layer.cornerRadius = 10
         label.textAlignment = .right
-//        view.addSubview(label)
     }
     
     func setupButton(){
@@ -70,7 +73,7 @@ class ViewController: UIViewController {
     
     func setupTextField() {
         textField.attributedPlaceholder = NSAttributedString(
-            string: "Tente rimar",
+            string: "escreva uma palavra",
             attributes: [.foregroundColor: UIColor(red: 1, green: 165/255, blue: 0, alpha: 0.5)]
         )
         textField.isSecureTextEntry = false
@@ -90,31 +93,34 @@ class ViewController: UIViewController {
     
     func setConstraints(){
         NSLayoutConstraint.activate([
-            
             //            textField
-            
-            textField.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 120),
+            textField.topAnchor.constraint(equalTo: self.view.layoutMarginsGuide.topAnchor, constant: 40),
             textField.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20),
             textField.bottomAnchor.constraint(equalTo: self.textField.topAnchor, constant: 40),
             textField.rightAnchor.constraint(equalTo: button.leftAnchor, constant: -10),
             
-            
             //            button
-            
             button.topAnchor.constraint(equalTo: textField.topAnchor),
             button.leftAnchor.constraint(equalTo: textField.rightAnchor),
             button.bottomAnchor.constraint(equalTo: textField.bottomAnchor),
             button.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20),
             
-            
             //            tableview
-            
             tableView.topAnchor.constraint(equalTo: self.textField.bottomAnchor, constant: 40),
             tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
-//            tableView.bottomAnchor.constraint(equalTo: self.label.topAnchor, constant: -20),
             tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
-
         ])
+    }
+    
+    func addLabelView(){
+        label.alpha = 0
+        self.view.addSubview(self.label)
+        self.setLabelConstraints()
+
+        UIView.animate(withDuration: 3) {
+            self.label.alpha = 1
+        }
+        
     }
     
     func setLabelConstraints(){
@@ -138,21 +144,12 @@ class ViewController: UIViewController {
         activityIndicator.startAnimating()
         self.view.addSubview(activityIndicator)
         activityIndicator.center = self.view.center
-        
-//        UIView.transition(with: self.view, duration: 3.0, options: [.transitionCrossDissolve], animations: {
-//            self.view.addSubview(self.label)
-//            self.setLabelConstraints()
-//        }, completion: nil)
-        
-        label.alpha = 0
-        self.view.addSubview(self.label)
-        self.setLabelConstraints()
 
-        UIView.animate(withDuration: 3) {
-            self.label.alpha = 1 // Set the alpha to 1 for fade-in effect
-        }
         self.categories = []
         self.tableView.reloadData()
+        
+        addLabelView()
+        
         Task{
             self.rhymes = await fetchWordsFromAPI(word: name)
             self.categories = Array(Set(rhymes.map { $0.categoria }))
@@ -185,6 +182,8 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate{
         if let indexPath = tableView.indexPathForRow(at: sender.location(in: tableView)) {
             let rhymesVC = RhymesViewController()
             rhymesVC.words = self.rhymes.filter{ $0.categoria == categories[indexPath.row] }.map{ $0.palavra }
+            rhymesVC.title = "Rimas com \"\(self.label.text!)\""
+//            rhymesVC.
             navigationController?.pushViewController(rhymesVC, animated: true)
         }
     }
