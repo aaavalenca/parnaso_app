@@ -27,7 +27,7 @@ class ViewController: UIViewController {
         
         setupTableView()
         setupTextField()
-        setupLabel()
+//        setupLabel()
         setupButton()
         setConstraints()
         
@@ -35,7 +35,6 @@ class ViewController: UIViewController {
     
     func setupLabel(){
         label.text = ""
-        //        label.text.
         label.textColor = .black
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -50,7 +49,7 @@ class ViewController: UIViewController {
         button.contentEdgeInsets = UIEdgeInsets(top: 8.0, left: 8.0, bottom: 8.0,right: 8.0)
         button.backgroundColor = UIColor(red: 25/255, green: 13/255, blue: 134/255, alpha: 1)
         button.addTarget(self, action: #selector(self.pressed), for: .touchUpInside)
-        button.layer.cornerRadius = 10
+        button.layer.cornerRadius = 5
         button.translatesAutoresizingMaskIntoConstraints = false
         
         view.addSubview(button)
@@ -70,14 +69,20 @@ class ViewController: UIViewController {
     }
     
     func setupTextField() {
-        textField.placeholder = "O que quer rimar?"
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "Tente rimar",
+            attributes: [.foregroundColor: UIColor(red: 1, green: 165/255, blue: 0, alpha: 0.5)]
+        )
         textField.isSecureTextEntry = false
-        textField.backgroundColor = UIColor(red: 232/255, green: 1, blue: 252/255, alpha: 1)
+        textField.backgroundColor = UIColor(red: 25/255, green: 13/255, blue: 134/255, alpha: 1)
+        textField.textColor = UIColor(red: 1, green: 165/255, blue: 0, alpha: 1)
         textField.borderStyle = UITextField.BorderStyle.roundedRect
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.autocorrectionType = UITextAutocorrectionType.no
         textField.returnKeyType = UIReturnKeyType.done
-        textField.clearButtonMode = .whileEditing
+        textField.clearButtonMode = .never
+        textField.tintColor = .red
+        textField.autocapitalizationType = .none
         textField.delegate = self
         
         view.addSubview(textField)
@@ -101,16 +106,16 @@ class ViewController: UIViewController {
             button.bottomAnchor.constraint(equalTo: textField.bottomAnchor),
             button.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20),
             
-            //            label
-            
-            label.topAnchor.constraint(equalTo: self.textField.bottomAnchor, constant: 20),
-            label.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20),
-            label.bottomAnchor.constraint(equalTo: self.label.bottomAnchor, constant: -20),
-            label.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20),
+//            //            label
+//
+//            label.topAnchor.constraint(equalTo: self.textField.bottomAnchor, constant: 20),
+//            label.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20),
+//            label.bottomAnchor.constraint(equalTo: self.label.bottomAnchor, constant: -20),
+//            label.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20),
             
             //            tableview
             
-            tableView.topAnchor.constraint(equalTo: self.label.bottomAnchor, constant: 20),
+            tableView.topAnchor.constraint(equalTo: self.textField.bottomAnchor, constant: 20),
             tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
             tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -20),
             tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
@@ -120,10 +125,10 @@ class ViewController: UIViewController {
     
     @objc func pressed(sender: UIButton) {
         guard let name = self.textField.text else {
-            self.label.text = ""
+//            self.label.text = ""
             return
         }
-        self.label.text = name
+//        self.label.text = name
         Task{
             
             self.rhymes = await fetchWordsFromAPI(word: name)
@@ -162,10 +167,13 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate{
 
 extension ViewController : UITextFieldDelegate {
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        
         let newText = (textField.text! as NSString).replacingCharacters(in: range, with: string)
+        
         if string == " " {
             return false
         }
+        
         return newText.count <= 12
     }
 }

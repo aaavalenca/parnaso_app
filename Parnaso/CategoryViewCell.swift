@@ -32,6 +32,7 @@ class CategoryViewCell: UITableViewCell {
         self.category.font = .systemFont(ofSize: 24, weight: .black)
         self.isUserInteractionEnabled = true
         self.accessoryType = .disclosureIndicator
+        self.tintColor = .red
     }
     
     func setupUI(){

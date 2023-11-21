@@ -50,6 +50,8 @@ extension RhymesViewController: UITableViewDataSource, UITableViewDelegate{
         let cell = tableView.dequeueReusableCell(withIdentifier: "rhymeCell", for: indexPath)
         cell.textLabel?.text = words?[indexPath.row]
         cell.backgroundColor = .clear
+        cell.textLabel?.textColor = UIColor(red: 25/255, green: 13/255, blue: 134/255, alpha: 1)
+        cell.textLabel?.font = .systemFont(ofSize: 14, weight: .medium)
         return cell
     }
     
