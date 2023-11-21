@@ -21,13 +21,13 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         self.view.backgroundColor = UIColor(red: 1, green: 165/255, blue: 0, alpha: 1)
-        self.navigationItem.title = "Parnaso"
+//        self.navigationItem.title = "Parnaso"
         
         self.stackView.axis = .vertical
         
         setupTableView()
         setupTextField()
-//        setupLabel()
+        setupLabel()
         setupButton()
         setConstraints()
         
@@ -35,12 +35,12 @@ class ViewController: UIViewController {
     
     func setupLabel(){
         label.text = ""
-        label.textColor = .black
-        label.textAlignment = .center
+        label.textColor = .red
+        label.font = .systemFont(ofSize: 48, weight: .black)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.layer.cornerRadius = 10
-        label.textAlignment = .left
-        view.addSubview(label)
+        label.textAlignment = .right
+//        view.addSubview(label)
     }
     
     func setupButton(){
@@ -106,34 +106,59 @@ class ViewController: UIViewController {
             button.bottomAnchor.constraint(equalTo: textField.bottomAnchor),
             button.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20),
             
-//            //            label
-//
-//            label.topAnchor.constraint(equalTo: self.textField.bottomAnchor, constant: 20),
-//            label.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20),
-//            label.bottomAnchor.constraint(equalTo: self.label.bottomAnchor, constant: -20),
-//            label.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20),
             
             //            tableview
             
-            tableView.topAnchor.constraint(equalTo: self.textField.bottomAnchor, constant: 20),
+            tableView.topAnchor.constraint(equalTo: self.textField.bottomAnchor, constant: 40),
             tableView.leftAnchor.constraint(equalTo: self.view.leftAnchor),
-            tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -20),
+//            tableView.bottomAnchor.constraint(equalTo: self.label.topAnchor, constant: -20),
             tableView.rightAnchor.constraint(equalTo: self.view.rightAnchor),
 
         ])
     }
     
+    func setLabelConstraints(){
+        NSLayoutConstraint.activate([
+
+        label.topAnchor.constraint(equalTo: self.tableView.bottomAnchor, constant: 20),
+        label.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 40),
+        label.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -40),
+        label.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -40),
+        ])
+
+    }
+    
     @objc func pressed(sender: UIButton) {
         guard let name = self.textField.text else {
-//            self.label.text = ""
+            self.label.text = ""
             return
         }
-//        self.label.text = name
+        self.label.text = name
+        let activityIndicator = UIActivityIndicatorView(style: .medium)
+        activityIndicator.startAnimating()
+        self.view.addSubview(activityIndicator)
+        activityIndicator.center = self.view.center
+        
+//        UIView.transition(with: self.view, duration: 3.0, options: [.transitionCrossDissolve], animations: {
+//            self.view.addSubview(self.label)
+//            self.setLabelConstraints()
+//        }, completion: nil)
+        
+        label.alpha = 0
+        self.view.addSubview(self.label)
+        self.setLabelConstraints()
+
+        UIView.animate(withDuration: 3) {
+            self.label.alpha = 1 // Set the alpha to 1 for fade-in effect
+        }
+        self.categories = []
+        self.tableView.reloadData()
         Task{
-            
             self.rhymes = await fetchWordsFromAPI(word: name)
             self.categories = Array(Set(rhymes.map { $0.categoria }))
             self.tableView.reloadData()
+            activityIndicator.stopAnimating()
+            activityIndicator.removeFromSuperview()
         }
     }
 }
